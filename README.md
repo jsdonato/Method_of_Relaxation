@@ -24,3 +24,5 @@ $ gnuplot
 $ plot 'out.txt' with image
 ```
 The following plot is produced
+
+![image](/images/example1.png)
