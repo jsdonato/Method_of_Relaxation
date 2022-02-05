@@ -1,7 +1,7 @@
 ## Usage and Command Line Flags
 This code allows a user to specify boundary conditions, the size of the grid, the number of iterations, the initial guess, and the subsequent file where the numerical solution is printed.  The following table specifies the command line flags which facilitates the input processing and their descriptions.
 
-| First Header  | Second Header |
+| Command Line Flag | Description |
 | ------------- | ------------- |
 | `-f`,`--file`  | The name of the file in which the numerical solution will be printed.  This flag is required.|
 | `-g`,`--guess`  | The value for the initial guess of the solution. Its default vale is zero.|
