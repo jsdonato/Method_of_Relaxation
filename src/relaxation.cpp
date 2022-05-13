@@ -47,6 +47,7 @@ private:
 	bool file_opt = false;
 	bool size_opt = false;
 	bool iter_opt = false;
+	bool method_opt = false;
         struct option longOpts[] = {{"file", required_argument, nullptr, 'f'},
                                     {"method", required_argument, nullptr, 'm'},
                                     {"guess", required_argument, nullptr, 'g'},
@@ -103,6 +104,7 @@ private:
                     break;
                 }
 		case 'm': {
+		    method_opt = true;
                     std::string str_m(optarg);
 		    method_name = str_m;
 		    break;
@@ -111,8 +113,8 @@ private:
                     exit(1);
             }
         }
-        if (!file_opt || !size_opt || !iter_opt) {
-	    std::cout << "ERROR: The (-f,--file), (-s,--size), and (-i,--iterations) options are all required.\n";
+        if (!file_opt || !size_opt || !iter_opt || !method_opt) {
+	    std::cout << "ERROR: The (-f,--file), (-s,--size), (-m, --method), and (-i,--iterations) options are all required.\n";
 	    exit(1);
         } 
     }
