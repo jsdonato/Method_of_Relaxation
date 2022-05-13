@@ -1,43 +1,39 @@
-#include <math.h>
-#include <fstream>
-#include <array>
+#include <memory>
 #include <iostream>
 #include <getopt.h>
-#include "lattice.h"
-#include "point.h"
+#include "methods.h"
+
 
 class relaxation{
 public:
     relaxation(int argc, char **argv) { 
-       get_options(argc, argv); 
-       lattices = {Lattice(SIZE, V_left, V_right, V_top, V_bottom),
-                   Lattice(SIZE, V_left, V_right, V_top, V_bottom, guess)}; 
+        get_options(argc, argv); 
+        if (method_name == "gauss") {
+            method = std::make_unique<GaussSeitel>(&file_name, &guess, &V_left, &V_right,
+			                           &V_top, &V_bottom, &SIZE, &iterations);
+	}
+        else if (method_name == "jacobi") {
+            method = std::make_unique<Jacobi>(&file_name, &guess, &V_left, &V_right,
+			                      &V_top, &V_bottom, &SIZE, &iterations);
+	}
+        else {
+            std::cout << "ERROR: Invalid option inputted for method\n";
+	    exit(1);
+	}
     }
 
     void Run() {
-        for (int i = 0; i < iterations; i++){ 
-            for (int j = SIZE + 2; j < ((SIZE + 1) * (SIZE + 1) - 1) - (SIZE + 1); j++){
-                if ((j + 1) % (SIZE + 1) != 0 && j % (SIZE + 1) != 0){ 
-		    double num = (1.0 / 4.0) * (lattices[(i + 1) % 2].R(j).V() + lattices[(i + 1) % 2].L(j).V() + lattices[(i + 1) % 2].U(j).V() + lattices[(i + 1) % 2].D(j).V());
-                    lattices[i % 2].at(j).set_V(num);
-                }
-            } 
-        }
+        method->Run(); 
     }
 
     void Print() {
-        std::ofstream out;
-	out.open(file_name);
-	for (int i = 0; i < (SIZE + 1) * (SIZE + 1); i++){
-            double x = lattices[iterations % 2].at(i).X();
-            double y = lattices[iterations % 2].at(i).Y();
-            out << x << " " << y << " " << lattices[iterations % 2].at(i).V() << "\n";
-        } 
+        method->Print();
     }
     
-private:
-    std::array<Lattice, 2> lattices;
+private: 
+    std::unique_ptr<Method> method = nullptr;
     std::string file_name;
+    std::string method_name;
     double guess = 0.0;
     double V_left = 0.0;
     double V_right = 0.0;
@@ -52,6 +48,7 @@ private:
 	bool size_opt = false;
 	bool iter_opt = false;
         struct option longOpts[] = {{"file", required_argument, nullptr, 'f'},
+                                    {"method", required_argument, nullptr, 'm'},
                                     {"guess", required_argument, nullptr, 'g'},
                                     {"left", required_argument, nullptr, 'l'},
                                     {"right", required_argument, nullptr, 'r'},
@@ -60,7 +57,7 @@ private:
 				    {"size", required_argument, nullptr, 's'},
                                     {"iterations", required_argument, nullptr, 'i'},
 				    { nullptr, 0, nullptr, '\0'}};
-        while ((option = getopt_long(argc, argv, "f:g:l:r:t:b:s:i:", longOpts, &option_index)) != -1){
+        while ((option = getopt_long(argc, argv, "f:g:l:r:t:b:s:i:m:", longOpts, &option_index)) != -1){
             switch (option){
                 case 'f': {
                     file_opt = true;
@@ -105,13 +102,18 @@ private:
                     iterations = std::stoi(str_i);
                     break;
                 }
+		case 'm': {
+                    std::string str_m(optarg);
+		    method_name = str_m;
+		    break;
+		}
 		default:
                     exit(1);
             }
         }
         if (!file_opt || !size_opt || !iter_opt) {
 	    std::cout << "ERROR: The (-f,--file), (-s,--size), and (-i,--iterations) options are all required.\n";
-	    exit(0);
+	    exit(1);
         } 
     }
 };
