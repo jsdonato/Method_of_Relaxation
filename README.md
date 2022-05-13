@@ -11,6 +11,7 @@ This code allows a user to specify boundary conditions, the size of the grid, th
 | `-b`,`--bottom`  | The value of the boundary condition on the bottom side of the unit square or the x-axis. Its default vale is zero.|
 | `-s`,`--size`  | The number of bins on each axis of the grid discretizing the unit square.  For example, if the argument after this flag is `3` each axis is partitioned into `3` sections and there are `(3+1)*(3+1)=16` grid points as a result.  This flag is required.|
 | `-i`,`--iterations`  | Number of iterations for the relaxation method.  This flag is required.|
+|`-m`, `--method`| The iterative method preferred.  the available options are `jacobi` or `gauss`. |
 
 ## Ouput
 The format of the ouput file after running this code is three columns with their respective values being the x-value, y-value, and solution (at the x-value and y-value).  This format allows the user to easily use gnuplot or a similar plotting software to visualize the solution. 
