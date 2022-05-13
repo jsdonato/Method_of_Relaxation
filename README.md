@@ -20,7 +20,7 @@ The format of the ouput file after running this code is three columns with their
 After running the following commands
 ```
 $ bash build
-$ ./relaxation -l 5 -s 100 -i 10000 -f out.txt -t 6
+$ ./relaxation -l 5 -s 100 -i 10000 -f out.txt -t 6 -m jacobi
 $ gnuplot
 $ plot 'out.txt' with image
 ```
